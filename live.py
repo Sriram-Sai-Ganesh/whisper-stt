@@ -1,6 +1,8 @@
 # code modified from github.com/davabase/whisper_real_time
 #! python3.7
 
+# Transcription demo
+# might have to `brew install pyaudio`
 import argparse
 import io
 import os
@@ -17,7 +19,7 @@ from sys import platform
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default="medium", help="Model to use",
+    parser.add_argument("--model", default="tiny", help="Model to use",
                         choices=["tiny", "base", "small", "medium", "large"])
     parser.add_argument("--non_english", action='store_true',
                         help="Don't use the english model.")
@@ -27,23 +29,26 @@ def main():
                         help="How real time the recording is in seconds.", type=float)
     parser.add_argument("--phrase_timeout", default=3,
                         help="How much empty space between recordings before we "
-                             "consider it a new line in the transcription.", type=float)  
+                            "consider it a new line in the transcription.", type=float)  
     if 'linux' in platform:
         parser.add_argument("--default_microphone", default='pulse',
                             help="Default microphone name for SpeechRecognition. "
-                                 "Run this with 'list' to view available Microphones.", type=str)
+                                "Run this with 'list' to view available Microphones.", type=str)
     args = parser.parse_args()
     
     # The last time a recording was retreived from the queue.
     phrase_time = None
     # Current raw audio bytes.
     last_sample = bytes()
-    # Thread safe Queue for passing data from the threaded recording callback.
+    # Thread safe Queue for passing data from 
+	# the threaded recording callback.
     data_queue = Queue()
-    # We use SpeechRecognizer to record our audio because it has a nice feauture where it can detect when speech ends.
+    # We use SpeechRecognizer to record our audio because it has a 
+	# nice feauture where it can detect when speech ends.
     recorder = sr.Recognizer()
     recorder.energy_threshold = args.energy_threshold
-    # Definitely do this, dynamic energy compensation lowers the energy threshold dramtically to a point where the SpeechRecognizer never stops recording.
+    # Definitely do this, dynamic energy compensation lowers the energy threshold 
+	# dramtically to a point where the SpeechRecognizer never stops recording.
     recorder.dynamic_energy_threshold = False
     
     # Important for linux users. 
