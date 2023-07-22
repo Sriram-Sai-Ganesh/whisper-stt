@@ -2,7 +2,7 @@
 #! python3.7
 
 # Transcription demo
-# might have to `brew install pyaudio`
+# might have to `brew install portaudio`
 import argparse
 import io
 import os
